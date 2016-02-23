@@ -1,6 +1,7 @@
 #include <Arduino.h>
-#include <MIDIUSB.h>
+//#include <MIDIUSB.h>
 
+//#include "ConfigUSB.h"
 #include "bombatuino_MIDI.h"
 #include "bombatuino_INPUT_74HC4051.h"
 #include "bombatuino_INPUT_MCP23017.h"
@@ -39,16 +40,19 @@ int midiChannel = 1;
 
 void analogCallback(int id, int pin, int value)
 {
+  /*
   // MIDI event, MIDI Event | Midi Channel, CC number, CC value
   midiEventPacket_t evt = { MIDI_CONTROL_CHANGE,
                             (uint8_t)(MIDI_CONTROL_CHANGE | midiChannel),
                             (uint8_t)((id-A0) * 8 + pin),
                             (uint8_t)value};
   MidiUSB.sendMIDI(evt);
+  */
 }
 
 void buttonCallBack(int id, int pin, int value)
 {
+  /*
   uint8_t note;
   if(value == HIGH)
     note = MIDI_NOTE_ON;
@@ -58,6 +62,7 @@ void buttonCallBack(int id, int pin, int value)
   midiEventPacket_t evt = { note, (uint8_t)(note | midiChannel),
                             (uint8_t)(id * 16 + pin), MIDI_MAX_DATA };
   MidiUSB.sendMIDI(evt);
+  */
 }
 
 void encoderCallback1(int id, int pin, int value)
