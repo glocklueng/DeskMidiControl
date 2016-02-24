@@ -6,6 +6,7 @@ BOARD_SUB     = atmega32u4
 BOARD_TAG     = micro
 
 ISP_PROG      = ArduinoISP
+#ISP_PROG      = usbasp
 ISP_PORT      = /dev/ttyACM0
 
 ARDUINO_VERSION = 10607

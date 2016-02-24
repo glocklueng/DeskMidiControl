@@ -1,6 +1,8 @@
 
 #include "ConfigUSB.h"
 
+#define CONFIG_INTERFACE      pluggedInterface
+
 #define CONFIG_FIRST_ENDPOINT pluggedEndpoint
 #define CONFIG_ENDPOINT_OUT   pluggedEndpoint
 #define CONFIG_ENDPOINT_IN    pluggedEndpoint+1
@@ -43,8 +45,7 @@ int ConfigUSB_::getInterface(uint8_t *interfaceNum)
 
   CONFIGDescriptor cfgInterface =
   {
-    D_CONFIG(sizeof(CONFIGDescriptor) ,1),
-    D_INTERFACE(0, 2, 0xFF, 0xFF, 0xFF),
+    D_INTERFACE(CONFIG_INTERFACE, 2, 0xFF, 0xFF, 0xFF),
     D_ENDPOINT(USB_ENDPOINT_IN(pluggedEndpoint+1), USB_ENDPOINT_TYPE_BULK, CONFIG_BUFFER_SIZE, 0x05),
     D_ENDPOINT(USB_ENDPOINT_OUT(pluggedEndpoint), USB_ENDPOINT_TYPE_BULK, CONFIG_BUFFER_SIZE, 0x05)
   };
@@ -66,10 +67,9 @@ configPacket_t ConfigUSB_::read(void)
       c = buffer->cfg[buffer->tail];
     } else {
       c.cmd = 0;
-      for(int i = 0; i < 32; i++)
-      {
-        c.data[i] = 0;
-      }
+      c.data1 = 0;
+      c.data2 = 0;
+      c.data3 = 0;
     }
   }
   // if the head isn't ahead of the tail, we don't have any characters
@@ -125,14 +125,13 @@ size_t ConfigUSB_::write(const uint8_t *buffer, size_t size)
 
 void ConfigUSB_::send(configPacket_t cfg)
 {
-  uint8_t data[33];
+  uint8_t data[4];
   data[0] = cfg.cmd;
-  for(int i = 0; i < 32; i++)
-  {
-    data[i + 1] = cfg.data[i];
-  }
+  data[1] = cfg.data1;
+  data[2] = cfg.data2;
+  data[3] = cfg.data3;
 
-  write(data, 33);
+  write(data, 4);
 }
 
 void ConfigUSB_::accept(void)

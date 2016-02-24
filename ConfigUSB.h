@@ -6,7 +6,9 @@
 typedef struct
 {
   uint8_t cmd;
-  uint8_t data[32];
+  uint8_t data1;
+  uint8_t data2;
+  uint8_t data3;
 } configPacket_t;
 
 // This is only for ATMega32u4 therefore, ARDUINO_ARCH_AVR
@@ -18,7 +20,6 @@ typedef struct
 
 typedef struct
 {
-  ConfigDescriptor    Config;
   InterfaceDescriptor VendorInterface;
   EndpointDescriptor  VendorEndpointIn;
   EndpointDescriptor  VendorEndpointOut;

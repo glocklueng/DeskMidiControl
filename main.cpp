@@ -1,5 +1,5 @@
 #include <Arduino.h>
-//#include <MIDIUSB.h>
+#include <MIDIUSB.h>
 
 //#include "ConfigUSB.h"
 #include "bombatuino_MIDI.h"
@@ -10,13 +10,14 @@
 // Globals
 //MIDI Midi; // Uses Serial ?!
 // Input 74hc4051 array
-INPUT_74HC4051 gPotMux[4];
+//INPUT_74HC4051 gPotMux[4];
 // Input MCP array
-INPUT_MCP23017 gButtonMux[4];
+//INPUT_MCP23017 gButtonMux[4];
 // Encoders MCP - 2 Encoders each MCP
-INPUT_MCP23017 gEncoder[2];
+//INPUT_MCP23017 gEncoder[2];
 
 // Rotary Encoders
+/*
 void rotaryEncoder1Inc(void);
 void rotaryEncoder1Dec(void);
 void rotaryEncoder2Inc(void);
@@ -30,9 +31,10 @@ ROTARY_ENCODER rotaryEncoder1(rotaryEncoder1Inc, rotaryEncoder1Dec); //input_MCP
 ROTARY_ENCODER rotaryEncoder2(rotaryEncoder2Inc, rotaryEncoder2Dec); //input_MCP23017_3 pins 9 and 1
 ROTARY_ENCODER rotaryEncoder3(rotaryEncoder3Inc, rotaryEncoder3Dec); //input_MCP23017_3 pins 5 and 6
 ROTARY_ENCODER rotaryEncoder4(rotaryEncoder4Inc, rotaryEncoder4Dec); //input_MCP23017_3 pins 5 and 6
+*/
 
-//void setupUSB() __attribute__((weak));
-//void setupUSB() { }
+void setupUSB() __attribute__((weak));
+void setupUSB() { }
 
 int midiChannel = 1;
 
@@ -40,14 +42,14 @@ int midiChannel = 1;
 
 void analogCallback(int id, int pin, int value)
 {
-  /*
+
   // MIDI event, MIDI Event | Midi Channel, CC number, CC value
   midiEventPacket_t evt = { MIDI_CONTROL_CHANGE,
                             (uint8_t)(MIDI_CONTROL_CHANGE | midiChannel),
                             (uint8_t)((id-A0) * 8 + pin),
                             (uint8_t)value};
   MidiUSB.sendMIDI(evt);
-  */
+
 }
 
 void buttonCallBack(int id, int pin, int value)
@@ -116,7 +118,7 @@ void rotaryEncoder4Dec(void)
 }
 
 // Setup
-
+/*
 void setupPotentiometers(void)
 {
   gPotMux[0].begin(A0, 7, 8, 9, analogCallback);
@@ -138,29 +140,57 @@ void setupEncoders(void)
   gEncoder[0].begin(6, encoderCallback1);
   gEncoder[1].begin(7, encoderCallback2);
 }
+*/
 
 int main(void)
 {
-        init();
+  init();
+  
+#if defined(USBCON)
+  USBDevice.attach();
+#endif
 
-        #if defined(USBCON)
-                USBDevice.attach();
-        #endif
-
-        // Initialize MIDI
-        //MIDI.begin(); // Uses Serial ?!?
-
-        // Setup Serial
-        Serial.begin(115200);
-
-        setupPotentiometers();
-        setupButtons();
-
-        for (;;) {
-          for(int i = 0; i < 4; i++) gPotMux[i].loop();
-          for(int i = 0; i < 4; i++) gButtonMux[i].loop();
-          if (serialEventRun) serialEventRun();
-        }
-
-        return 0;
+  // Setup Serial
+  Serial.begin(115200);
+  
+  Serial.println("Setting up potentiometers");
+  //setupPotentiometers();
+  Serial.println("Setting up buttons");
+  //setupButtons();
+  
+  Serial.println("Setup done");
+  
+  //configPacket_t cfg = {0};
+  //cfg.cmd = 0x00;
+  
+  for (;;) {
+    //for(int i = 0; i < 4; i++) gPotMux[i].loop();
+    //for(int i = 0; i < 4; i++) gButtonMux[i].loop();
+    
+    //cfg.cmd++;
+    //ConfigUSB.send(cfg);
+    //Serial.print("Sent ");
+    //Serial.println(cfg.cmd);
+    
+    //configPacket_t cfg = ConfigUSB.read();
+    /*
+      do
+      {
+      Serial1.println("Received USB Data");
+      Serial1.print("Command: ");
+      Serial1.println(cfg.cmd, HEX);
+      Serial1.print("Data: ");
+      for(int i = 0; i < 32; i++)
+      {
+      Serial1.print(cfg.data[i], HEX);
+      Serial1.print(" ");
+      }
+      Serial1.println("");
+      } while(cfg.cmd != 0);
+    */
+    
+    if (serialEventRun) serialEventRun();
+  }
+  
+  return 0;
 }
